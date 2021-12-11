@@ -1,14 +1,11 @@
 package main
 
 import (
-	"encoding/json"
 	"errors"
-	"io/ioutil"
-	"os"
 )
 
 var ErrServiceNotFound = errors.New("service not found")
-var ycp  ConfigProvider
+
 type ConfigProvider interface {
 	GetServiceConfig(servicename string) (*Config, error)
 }
@@ -16,10 +13,37 @@ type Config struct {
 	Endpoint string
 }
 
+var icp ConfigProvider
+
+type InMemoryConfigProvider struct {
+	Services map[string]*Config
+}
+
+func (i *InMemoryConfigProvider) GetServiceConfig(servicename string) (*Config, error) {
+	cfg, ok := i.Services[servicename]
+	if !ok {
+		return nil, ErrServiceNotFound
+	}
+	return cfg, nil
+}
+func NewInMemoryConfigProvider() *InMemoryConfigProvider {
+	return &InMemoryConfigProvider{
+		Services: map[string]*Config{
+			"hello": &Config{
+				Endpoint: "http://localhost:9000/",
+			},
+			"redis": &Config{
+				Endpoint: "http://localhost:6379",
+			},
+		},
+	}
+}
+
+/*
+var ycp  ConfigProvider
 type yamlConfigProvider struct {
 	Services map[string]*Config `json:"services"`
 }
-
 func (y *yamlConfigProvider) GetServiceConfig(servicename string) (*Config, error) {
 	ycp, ok := y.Services[servicename]
 	if !ok {
@@ -35,10 +59,11 @@ func NewYamlConfigProvider(filepath string) (*yamlConfigProvider, error) {
 	data, _ := ioutil.ReadAll(content)
 	ycp := &yamlConfigProvider{}
 	_ = json.Unmarshal(data, ycp)
-
 	return ycp,nil
 }
-
+*/
 func init() {
-	ycp,_ = NewYamlConfigProvider("./application.json")
+	//ycp,_ = NewYamlConfigProvider("./application.json")
+
+	icp = NewInMemoryConfigProvider()
 }

@@ -40,7 +40,8 @@ func SetFuncFeild(val Service) {
 				}
 
 				serviceName := val.GetServiceName()
-				cfg,_ := ycp.GetServiceConfig(serviceName)
+				cfg,_ := icp.GetServiceConfig(serviceName)
+				//cfg,_ := ycp.GetServiceConfig(serviceName)
 
 				client := http.Client{}
 				resp, err := client.Post(cfg.Endpoint, "application/json", bytes.NewReader(inData))
