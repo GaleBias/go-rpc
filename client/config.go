@@ -13,6 +13,7 @@ type Config struct {
 	Endpoint string
 }
 
+
 var icp ConfigProvider
 
 type InMemoryConfigProvider struct {
@@ -39,6 +40,7 @@ func NewInMemoryConfigProvider() *InMemoryConfigProvider {
 	}
 }
 
+
 /*
 var ycp  ConfigProvider
 type yamlConfigProvider struct {
@@ -64,6 +66,10 @@ func NewYamlConfigProvider(filepath string) (*yamlConfigProvider, error) {
 */
 func init() {
 	//ycp,_ = NewYamlConfigProvider("./application.json")
-
+	//icp = NewInMemoryConfigProvider()
 	icp = NewInMemoryConfigProvider()
+	err := InitApplication(WithCfgProvider(icp))
+	if err != nil {
+		panic("初始化失败...")
+	}
 }

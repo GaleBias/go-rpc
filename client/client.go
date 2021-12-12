@@ -40,8 +40,9 @@ func SetFuncFeild(val Service) {
 				}
 
 				serviceName := val.GetServiceName()
-				cfg,_ := icp.GetServiceConfig(serviceName)
+				//cfg,_ := icp.GetServiceConfig(serviceName)
 				//cfg,_ := ycp.GetServiceConfig(serviceName)
+				cfg,_ := App.CfgProvider.GetServiceConfig(serviceName)
 
 				client := http.Client{}
 				resp, err := client.Post(cfg.Endpoint, "application/json", bytes.NewReader(inData))
@@ -66,6 +67,9 @@ func SetFuncFeild(val Service) {
 	}
 }
 func main(){
+	icp := NewInMemoryConfigProvider()  // 从内存中初始化配置信息
+	_ = InitApplication(WithCfgProvider(icp))  // 将初始化的配置信息,传入给App
+
 	h := &Hello{}
 	SetFuncFeild(h)
 	data,_ := h.FuncFiled(&Input{
