@@ -6,13 +6,15 @@ import (
 	"io/ioutil"
 	"net/http"
 )
-
 type Input struct{ Name string }
 type Output struct{ Msg string }
 
 func handle(w http.ResponseWriter, r *http.Request) {
-
 	data, _ := ioutil.ReadAll(r.Body)
+	serviceName := r.Header.Get("sparrow-service")
+	methodName := r.Header.Get("sparrow-service-method")
+
+	service :=
 	input := &Input{}
 	_ = json.Unmarshal(data, input)
 
@@ -24,6 +26,9 @@ func handle(w http.ResponseWriter, r *http.Request) {
 
 }
 func main() {
+	AddService(&helloService{})
+	AddService(&userService{})
+
 	http.HandleFunc("/", handle)
 	http.ListenAndServe(":9000", nil)
 }
